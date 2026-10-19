@@ -16,15 +16,6 @@
   },
   "keywords": [],
   "license": "MIT",
-  "dependencies": {
-    "boxen": "^6.2.1",
-    "chalk": "^2.4.1",
-    "commander": "^2.19.0",
-    "yargs": "^15.3.1"
-  },
-  "devDependencies": {
-    "standard": "^16.0.4"
-  },
   "bugs": {
     "url": "https://github.com/breakzplatform/card/issues"
   },

@@ -1,87 +1,44 @@
 #!/usr/bin/env node
 
-import chalk from "chalk";
-import boxen from "boxen";
-import yargs from "yargs";
+import { parseArgs } from "node:util";
+import { render } from "../src/render.js";
 
-const { argv } = yargs;
+const usage = `Usage: npx joselito [--lang en|pt] [--no-color]
 
-const lang = argv.lang || "en";
+Options:
+  --lang <code>  Card language: en (default) or pt
+  --no-color     Print without colors (NO_COLOR is honored too)
+  -h, --help     Show this help`;
 
-const options = {
-  padding: 1,
-  margin: 1,
-  title: "joseli.to",
-  titleAlignment: "center",
-  borderStyle: "bold",
-  borderColor: "#652585",
-};
+function detectColorMode(stream, env, noColorFlag) {
+  if (noColorFlag || "NO_COLOR" in env) return "none";
+  const forced = env.FORCE_COLOR;
+  if (forced === "0" || forced === "false") return "none";
+  if (!forced && (!stream.isTTY || env.TERM === "dumb")) return "none";
+  if (/^(truecolor|24bit)$/i.test(env.COLORTERM ?? "")) return "truecolor";
+  return "ansi256";
+}
 
-const data = {
-  logo: chalk.white(`     __ _____ 
-  __|  |     |
- |  |  |  |  |
- |_____|_____|
-  _____ _____ 
- |   __|   __|
- |__   |   __|
- |_____|_____|`),
-  name: chalk.white(" Joselito ·"),
-  mail: {
-    en: chalk.hex(options.borderColor)("me@joseli.to"),
-    pt: chalk.hex(options.borderColor)("eu@joseli.to"),
-  },
-  pronoun: {
-    en: chalk.white("(he/him/his)"),
-    pt: chalk.white("(ele/dele)"),
-  },
-  work: chalk.white("Community Program Manager · Turing"),
-  twitter: chalk.hex(options.borderColor)("https://twitter.com/breakzplatform"),
-  github: chalk.hex(options.borderColor)("https://github.com/breakzplatform"),
-  unsplash: chalk.hex(options.borderColor)("https://unsplash.com/@breakzplatform"),
-  picpay: {
-    pt: chalk.hex(options.borderColor)("https://picpay.me/joselitojunior"),
-    en: chalk.hex(options.borderColor)("https://ko-fi.com/joselito")
-  },
-  web: {
-    pt: chalk.hex(options.borderColor)("https://joseli.to/pt"),
-    en: chalk.hex(options.borderColor)("https://joseli.to")
-  },
-};
+let options;
+try {
+  ({ values: options } = parseArgs({
+    options: {
+      lang: { type: "string", default: "en" },
+      "no-color": { type: "boolean", default: false },
+      help: { type: "boolean", short: "h", default: false },
+    },
+  }));
+} catch (error) {
+  console.error(`${error.message}\n\n${usage}`);
+  process.exit(1);
+}
 
-const defaultLabel = {
-  work: chalk.white.bold("     Work:"),
-  twitter: chalk.white.bold("  Twitter:"),
-  github: chalk.white.bold("   GitHub:"),
-  picpay: chalk.white.bold("    Ko-fi:"),
-  unsplash: chalk.white.bold(" Unsplash:"),
-  web: chalk.white.bold("      Web:"),
-};
+if (options.help) {
+  console.log(usage);
+  process.exit(0);
+}
 
-const label = {
-  en: { ...defaultLabel },
-  pt: {
-    ...defaultLabel,
-    work: chalk.white.bold(" Trabalho:"),
-    card: chalk.white.bold("   Cartão:"),
-    picpay: chalk.white.bold("   PicPay:"),
-    web: chalk.white.bold("     Site:"),
-  },
-};
+const colorMode = detectColorMode(process.stdout, process.env, options["no-color"]);
+const hyperlinks = colorMode !== "none" && process.stdout.isTTY === true;
 
-const output = `${data.logo}
-
-
-${data.name} ${data.mail[lang]} ${data.pronoun[lang]}
-
-${label[lang].work}  ${data.work}
-            ${chalk.hex(options.borderColor)("joselito@turing.com")}
-
-${label[lang].web}  ${data.web[lang]}
-${label[lang].twitter}  ${data.twitter}
-${label[lang].github}  ${data.github}
-${label[lang].unsplash}  ${data.unsplash}
-${label[lang].picpay}  ${data.picpay[lang]}`;
-
-console.clear();
-console.log(chalk(boxen(output, options)));
+console.log(`\n${render({ lang: options.lang, colorMode, hyperlinks })}\n`);

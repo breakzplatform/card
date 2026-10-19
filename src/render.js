@@ -1,4 +1,4 @@
-import { card } from "./data.js";
+import { card, localizeLink } from "./data.js";
 
 // Terminal theme of the joseli.to design system ("amber phosphor on black"):
 // [truecolor hex, nearest xterm-256 index].
@@ -85,7 +85,8 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
   );
   const labelWidth = Math.max(...labels.map((label) => label.length));
   const linkRows = card.sections.map((section) =>
-    section.links.map((link) => {
+    section.links.map((sourceLink) => {
+      const link = localizeLink(sourceLink, lang);
       const label = locale.labels[link.key].toUpperCase();
       const display = link.display ?? link.url;
       return {

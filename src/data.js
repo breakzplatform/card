@@ -3,6 +3,11 @@
 // GitHub Sponsors (as listed on https://pix.joseli.to).
 export const pixKey = "apoie@pix.joseli.to";
 
+// A link can override its fields per language under `locales`.
+export function localizeLink(link, lang) {
+  return { ...link, ...link.locales?.[lang] };
+}
+
 export const card = {
   command: "npx joselito",
   wordmark: { base: "joseli", block: ".to" },
@@ -13,7 +18,11 @@ export const card = {
       key: "accounts",
       links: [
         { key: "linkedin", url: "https://www.linkedin.com/in/breakzplatform" },
-        { key: "bluesky", url: "https://bsky.app/profile/joseli.to" },
+        {
+          key: "bluesky",
+          url: "https://bsky.app/profile/im.joseli.to",
+          locales: { pt: { url: "https://bsky.app/profile/joseli.to" } },
+        },
         { key: "github", url: "https://github.com/breakzplatform" },
         { key: "orcid", url: "https://orcid.org/0009-0009-2564-0761" },
       ],
@@ -29,7 +38,12 @@ export const card = {
     {
       key: "contact",
       links: [
-        { key: "email", url: "mailto:me@joseli.to", display: "me@joseli.to" },
+        {
+          key: "email",
+          url: "mailto:me@joseli.to",
+          display: "me@joseli.to",
+          locales: { pt: { url: "mailto:eu@joseli.to", display: "eu@joseli.to" } },
+        },
         { key: "booking", url: "https://cal.joseli.to/me" },
         { key: "web", url: "https://joselito.bio" },
       ],

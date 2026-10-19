@@ -21,7 +21,7 @@ test("plain card has no escape codes and current info", () => {
     "i make websites (and things)",
     "https://joselito.bio",
     "https://github.com/breakzplatform",
-    "https://bsky.app/profile/joseli.to",
+    "bsky.app/profile/im.joseli.to",
   ]) {
     assert.ok(output.includes(expected), `missing ${expected}`);
   }
@@ -83,4 +83,14 @@ test("the Pix key is plain text, not a hyperlink", () => {
   const output = render({ colorMode: "truecolor", hyperlinks: true }).text;
   assert.doesNotMatch(output, /\x1b\]8;;[^\x07]*apoie@pix/);
   assert.match(output, /\x1b\]8;;https:\/\/github\.com\/sponsors\/breakzplatform\x07/);
+});
+
+test("email and Bluesky follow the language", () => {
+  const english = render({ lang: "en" }).text;
+  const portuguese = render({ lang: "pt" }).text;
+  assert.match(english, /me@joseli\.to/);
+  assert.match(english, /bsky\.app\/profile\/im\.joseli\.to/);
+  assert.match(portuguese, /eu@joseli\.to/);
+  assert.match(portuguese, /bsky\.app\/profile\/joseli\.to/);
+  assert.doesNotMatch(portuguese, /me@joseli\.to|im\.joseli\.to/);
 });

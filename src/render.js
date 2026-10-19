@@ -51,6 +51,10 @@ function createPainter(colorMode, hyperlinks) {
   };
 }
 
+export function displayUrl(url) {
+  return url.replace(/^https?:\/\/(www\.)?/, "").replace(/^mailto:/, "");
+}
+
 function wrap(text, width) {
   const lines = [];
   let current = "";
@@ -88,7 +92,7 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
     section.links.map((sourceLink) => {
       const link = localizeLink(sourceLink, lang);
       const label = locale.labels[link.key].toUpperCase();
-      const display = link.display ?? link.url;
+      const display = link.display ?? displayUrl(link.url);
       return {
         width: labelWidth + 2 + visibleWidth(display),
         text:

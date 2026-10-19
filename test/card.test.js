@@ -19,8 +19,8 @@ test("plain card has no escape codes and current info", () => {
   for (const expected of [
     "Joselito",
     "i make websites (and things)",
-    "https://joselito.bio",
-    "https://github.com/breakzplatform",
+    "joselito.bio",
+    "github.com/breakzplatform",
     "bsky.app/profile/im.joseli.to",
   ]) {
     assert.ok(output.includes(expected), `missing ${expected}`);
@@ -93,4 +93,10 @@ test("email and Bluesky follow the language", () => {
   assert.match(portuguese, /eu@joseli\.to/);
   assert.match(portuguese, /bsky\.app\/profile\/joseli\.to/);
   assert.doesNotMatch(portuguese, /me@joseli\.to|im\.joseli\.to/);
+});
+
+test("links show no scheme but hyperlink to the full URL", () => {
+  assert.doesNotMatch(render().text, /https?:\/\//);
+  const linked = render({ colorMode: "truecolor", hyperlinks: true }).text;
+  assert.ok(linked.includes("\x1b]8;;https://www.linkedin.com/in/breakzplatform\x07linkedin.com/in/breakzplatform"));
 });

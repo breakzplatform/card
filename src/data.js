@@ -29,7 +29,7 @@ export const card = {
   ],
   locales: {
     en: {
-      titles: ["i make websites (and things)", "Twilio Champion"],
+      titles: ["i make websites (and things)"],
       pronouns: "he/him",
       location: "Recife, Brazil",
       about:
@@ -49,7 +49,7 @@ export const card = {
       },
     },
     pt: {
-      titles: ["i make websites (and things)", "Twilio Champion"],
+      titles: ["i make websites (and things)"],
       pronouns: "ele/dele",
       location: "Recife, Brasil",
       about:

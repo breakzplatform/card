@@ -18,7 +18,7 @@ test("plain card has no escape codes and current info", () => {
   assert.doesNotMatch(output, /\x1b/);
   for (const expected of [
     "Joselito",
-    "Twilio Champion",
+    "i make websites (and things)",
     "https://joselito.bio",
     "https://github.com/breakzplatform",
     "https://bsky.app/profile/joseli.to",
@@ -44,7 +44,7 @@ test("unknown language falls back to English", () => {
 test("cli prints the card without colors when piped", () => {
   const result = runCard();
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Twilio Champion/);
+  assert.match(result.stdout, /i make websites/);
   assert.doesNotMatch(result.stdout, /\x1b/);
 });
 

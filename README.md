@@ -23,7 +23,7 @@ npx joselito
 
 ## Accounts
 
-[LinkedIn](https://www.linkedin.com/in/breakzplatform) · [Bluesky](https://bsky.app/profile/joseli.to) · [GitHub](https://github.com/breakzplatform) · [ORCID](https://orcid.org/0009-0009-2564-0761)
+[LinkedIn](https://www.linkedin.com/in/breakzplatform) · [Bluesky](https://bsky.app/profile/im.joseli.to) · [GitHub](https://github.com/breakzplatform) · [ORCID](https://orcid.org/0009-0009-2564-0761)
 
 ## Support
 
@@ -34,9 +34,7 @@ npx joselito
 
 **Pix key (email)**, or run `npx joselito --pix` to copy it
 
-```
-apoie@pix.joseli.to
-```
+<code>apoie@<a href="https://pix.joseli.to">pix.joseli.to</a></code>
 
 <a href="https://buymeacoffee.com/joselito">
   <picture>
@@ -54,7 +52,7 @@ apoie@pix.joseli.to
 
 ## Contact
 
-[me@joseli.to](mailto:me@joseli.to) · [cal.joseli.to/me](https://cal.joseli.to/me) · [joselito.bio](https://joselito.bio)
+[me@joseli.to](mailto:me@joseli.to) · Book a call: [cal.joseli.to/me](https://cal.joseli.to/me) · [joselito.bio](https://joselito.bio)
 
 ## Options
 
@@ -72,12 +70,13 @@ The card follows the terminal theme of the joseli.to design system: amber on bla
 
 ### Inline avatar
 
-Terminals with inline images show the avatar inside the card:
+Terminals with inline images show the avatar inside the card and a larger wordmark:
 
-- kitty graphics protocol: kitty, Ghostty
-- iTerm2 inline images: iTerm2, WezTerm
+- kitty: kitty graphics for the avatar, double-size text (OSC 66, kitty 0.40+) for the wordmark
+- Ghostty: kitty graphics for both
+- iTerm2, WezTerm: iTerm2 inline images for both
 
-Everywhere else, and always when piped, with `NO_COLOR`/`--no-color`, inside tmux or screen, or when the window is too short for the card, the card is text only. The image is a 2 KB PNG embedded in [`src/avatar.js`](src/avatar.js), so the card works offline.
+Everywhere else, and always when piped, with `NO_COLOR`/`--no-color`, inside tmux or screen, or when the window is too short for the card, the card is text only. The images are small PNGs embedded in [`src/avatar.js`](src/avatar.js) and [`src/wordmark.js`](src/wordmark.js), so the card works offline.
 
 ### Copying the Pix key
 
@@ -98,6 +97,6 @@ The card content lives in [`src/data.js`](src/data.js) and mirrors [joselito.bio
 Generated files:
 
 - `src/avatar.js`: `scripts/build-avatar.sh` (needs ImageMagick)
-- `assets/card.svg`, `assets/card-dark.svg`: `uv run --with fonttools --with brotli scripts/build-readme-svg.py`, after any change to the card
+- `src/wordmark.js`, `assets/card.svg`, `assets/card-dark.svg`: `uv run --with fonttools --with brotli scripts/build-images.py` (needs ImageMagick), after any change to the card
 
 The Pix QR code and the support buttons come from [pix.joseli.to](https://github.com/breakzplatform/pix.joseli.to).

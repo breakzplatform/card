@@ -5,7 +5,14 @@ import { avatarPng } from "../src/avatar.js";
 import { copyToClipboard } from "../src/clipboard.js";
 import { card as content, pixKey } from "../src/data.js";
 import { render } from "../src/render.js";
-import { detectColorMode, detectImageProtocol, encodeImage, placeImage } from "../src/terminal.js";
+import {
+  detectColorMode,
+  detectImageProtocol,
+  encodeImage,
+  placeImage,
+  supportsTextSizing,
+} from "../src/terminal.js";
+import { wordmarkPng } from "../src/wordmark.js";
 
 const usage = `Usage: npx joselito [--lang en|pt] [--no-color] [--image auto|kitty|iterm|off] [--pix]
 
@@ -61,10 +68,14 @@ const colorMode = detectColorMode({ isTTY, env, noColor: options["no-color"] });
 let protocol = detectImageProtocol({ isTTY, env, colorMode, preference: options.image });
 
 const renderOptions = { lang: options.lang, colorMode, hyperlinks: colorMode !== "none" && isTTY };
-let card = render({ ...renderOptions, avatar: protocol !== "none" });
+const imageOptions = {
+  avatar: true,
+  wordmark: supportsTextSizing({ env, protocol }) ? "sized" : "image",
+};
+let card = render(protocol === "none" ? renderOptions : { ...renderOptions, ...imageOptions });
 
-// Placing the image moves the cursor back up into the card, which only
-// works while the whole card is still on screen.
+// Placing images moves the cursor back up into the card, which only works
+// while the whole card is still on screen.
 const cardHeight = card.text.split("\n").length;
 if (card.avatar && isTTY && stdout.rows && stdout.rows < cardHeight + 3) {
   protocol = "none";
@@ -72,10 +83,14 @@ if (card.avatar && isTTY && stdout.rows && stdout.rows < cardHeight + 3) {
 }
 
 let output = `\n${card.text}\n\n`;
-if (card.avatar) {
-  output += placeImage(encodeImage(protocol, avatarPng, card.avatar), {
-    linesBelow: cardHeight + 1 - card.avatar.line,
-    column: card.avatar.column,
+for (const [placement, png] of [
+  [card.avatar, avatarPng],
+  [card.wordmark, wordmarkPng],
+]) {
+  if (!placement) continue;
+  output += placeImage(encodeImage(protocol, png, placement), {
+    linesBelow: cardHeight + 1 - placement.line,
+    column: placement.column,
   });
 }
 stdout.write(output);

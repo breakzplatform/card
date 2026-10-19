@@ -1,4 +1,5 @@
 import { card, localizeLink } from "./data.js";
+import { wordmarkCells } from "./wordmark.js";
 
 // Terminal theme of the joseli.to design system ("amber phosphor on black"):
 // [truecolor hex, nearest xterm-256 index].
@@ -19,9 +20,21 @@ const padding = 2;
 const avatarGap = 2;
 
 const ansiPattern = /\x1b\[[0-9;]*m|\x1b\]8;;[^\x07]*\x07/g;
+const sizedTextPattern = /\x1b\]66;s=(\d+);([^\x07]*)\x07/g;
+const cursorForwardPattern = /\x1b\[(\d+)C/g;
 
 export function visibleWidth(text) {
-  return [...text.replace(ansiPattern, "")].length;
+  const cells = text
+    .replace(sizedTextPattern, (_, scale, sized) => " ".repeat(Number(scale) * [...sized].length))
+    .replace(cursorForwardPattern, (_, count) => " ".repeat(Number(count)))
+    .replace(ansiPattern, "");
+  return [...cells].length;
+}
+
+// Kitty's text sizing protocol: the text is drawn `scale` times larger,
+// spanning `scale` rows. https://sw.kovidgoyal.net/kitty/text-sizing-protocol/
+function sizedText(text, scale) {
+  return `\x1b]66;s=${scale};${text}\x07`;
 }
 
 function colorCode(colorMode, [hex, ansi256], layer) {
@@ -76,11 +89,21 @@ function wrap(text, width) {
  * @param {"none"|"ansi256"|"truecolor"} [options.colorMode]
  * @param {boolean} [options.hyperlinks] emit OSC 8 clickable links
  * @param {boolean} [options.avatar] reserve room for the inline avatar image
- * @returns {{ text: string, avatar: null | { line: number, column: number, cols: number, rows: number } }}
- *   `avatar.line` is the 0-based line of `text` and `avatar.column` the
- *   1-based column where the image's top-left cell goes.
+ * @param {"text"|"sized"|"image"} [options.wordmark] how to draw the wordmark:
+ *   one line of text, double-size text (kitty), or an inline image; the
+ *   last two need `avatar`, since they come with image-capable terminals
+ * @returns {{ text: string, avatar: Placement | null, wordmark: Placement | null }}
+ *   where Placement is { line, column, cols, rows }: the 0-based line of
+ *   `text` and the 1-based column of the image's top-left cell.
  */
-export function render({ lang = "en", colorMode = "none", hyperlinks = false, avatar = false } = {}) {
+export function render({
+  lang = "en",
+  colorMode = "none",
+  hyperlinks = false,
+  avatar = false,
+  wordmark = "text",
+} = {}) {
+  const wordmarkMode = avatar ? wordmark : "text";
   const locale = card.locales[lang] ?? card.locales.en;
   const { paint, space, block } = createPainter(colorMode, hyperlinks);
 
@@ -106,8 +129,19 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
   );
   const contentWidth = Math.max(minContentWidth, ...linkRows.flat().map((row) => row.width));
 
+  const { base, block: inkBlock } = card.wordmark;
+  const wordmarkRows = {
+    text: [paint(base, { bold: true }) + block(inkBlock)],
+    // The second row belongs to the double-size glyphs; writing spaces
+    // there would erase them, so the cursor just skips over.
+    sized: [
+      paint(sizedText(base, 2), { bold: true }) + block(sizedText(inkBlock, 2)),
+      `\x1b[${2 * [...(base + inkBlock)].length}C`,
+    ],
+    image: Array.from({ length: wordmarkCells.rows }, () => space(wordmarkCells.cols)),
+  }[wordmarkMode];
   const header = [
-    paint(card.wordmark.base, { bold: true }) + block(card.wordmark.block),
+    ...wordmarkRows,
     "",
     paint(card.name, { bold: true }),
     ...locale.titles.map((title) => paint(title)),
@@ -131,10 +165,13 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
   lines.push("", paint(`# ${locale.hint}`, { fg: "textMuted" }), paint("■", { blink: true }));
 
   const text = frame(lines, { contentWidth, paint, space });
-  const avatarPlacement = avatar
-    ? { line: 1 + padding / 2 + headerLine, column: 2 + padding, ...avatarCells }
-    : null;
-  return { text, avatar: avatarPlacement };
+  const firstLine = 1 + padding / 2 + headerLine;
+  const avatarPlacement = avatar ? { line: firstLine, column: 2 + padding, ...avatarCells } : null;
+  const wordmarkPlacement =
+    wordmarkMode === "image"
+      ? { line: firstLine, column: 2 + padding + headerIndent, ...wordmarkCells }
+      : null;
+  return { text, avatar: avatarPlacement, wordmark: wordmarkPlacement };
 }
 
 // A 2px-style rectangle (heavy box drawing) casting a dotted shadow

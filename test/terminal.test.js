@@ -2,7 +2,14 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { avatarPng } from "../src/avatar.js";
 import { avatarCells, render, visibleWidth } from "../src/render.js";
-import { detectColorMode, detectImageProtocol, encodeImage, placeImage } from "../src/terminal.js";
+import {
+  detectColorMode,
+  detectImageProtocol,
+  encodeImage,
+  placeImage,
+  supportsTextSizing,
+} from "../src/terminal.js";
+import { wordmarkCells, wordmarkPng } from "../src/wordmark.js";
 
 const tty = { isTTY: true, colorMode: "truecolor" };
 
@@ -93,4 +100,47 @@ test("avatar layout reserves a blank cell box inside the card", () => {
   assert.match([...lines[avatar.line]].slice(avatar.column - 1).join(""), /^ {16}joseli\.to/);
   assert.equal(new Set(lines.map(visibleWidth)).size, 1);
   assert.equal(render().avatar, null);
+});
+
+test("text sizing is used on kitty only", () => {
+  assert.ok(supportsTextSizing({ env: { TERM: "xterm-kitty" }, protocol: "kitty" }));
+  assert.ok(supportsTextSizing({ env: { KITTY_WINDOW_ID: "3" }, protocol: "kitty" }));
+  assert.ok(!supportsTextSizing({ env: { TERM_PROGRAM: "ghostty" }, protocol: "kitty" }));
+  assert.ok(!supportsTextSizing({ env: { TERM: "xterm-kitty" }, protocol: "none" }));
+  assert.ok(!supportsTextSizing({ env: { TERM_PROGRAM: "iTerm.app" }, protocol: "iterm" }));
+});
+
+test("double-size wordmark uses OSC 66 and skips its second row", () => {
+  const { text, wordmark } = render({ avatar: true, wordmark: "sized", colorMode: "truecolor" });
+  assert.equal(wordmark, null);
+  const lines = text.split("\n");
+  const index = lines.findIndex((line) => line.includes("\x1b]66;s=2;joseli\x07"));
+  assert.ok(index > 0);
+  assert.ok(lines[index].includes("\x1b]66;s=2;.to\x07"));
+  assert.ok(lines[index + 1].includes("\x1b[18C"));
+  assert.equal(new Set(lines.map(visibleWidth)).size, 1);
+});
+
+test("image wordmark reserves blank cells beside the avatar", () => {
+  const { text, avatar, wordmark } = render({ avatar: true, wordmark: "image" });
+  assert.deepEqual({ cols: wordmark.cols, rows: wordmark.rows }, wordmarkCells);
+  assert.equal(wordmark.line, avatar.line);
+  assert.ok(wordmark.column >= avatar.column + avatar.cols);
+  const lines = text.split("\n");
+  for (let row = 0; row < wordmark.rows; row++) {
+    const cells = [...lines[wordmark.line + row]].slice(wordmark.column - 1, wordmark.column - 1 + wordmark.cols);
+    assert.equal(cells.join(""), " ".repeat(wordmark.cols));
+  }
+  assert.doesNotMatch(lines[wordmark.line], /joseli/);
+  assert.equal(new Set(lines.map(visibleWidth)).size, 1);
+});
+
+test("without the avatar the wordmark stays one line of text", () => {
+  for (const mode of ["sized", "image"]) {
+    const result = render({ wordmark: mode });
+    assert.equal(result.wordmark, null);
+    assert.match(result.text, /joseli\.to/);
+  }
+  const bytes = Buffer.from(wordmarkPng, "base64");
+  assert.equal(bytes.toString("latin1", 1, 4), "PNG");
 });

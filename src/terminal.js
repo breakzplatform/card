@@ -37,6 +37,16 @@ export function detectImageProtocol({ isTTY, env, colorMode, preference = "auto"
   return "none";
 }
 
+/**
+ * Kitty draws double-size text with its text sizing protocol (OSC 66,
+ * kitty 0.40+). Other kitty-protocol terminals, like Ghostty, do not.
+ */
+export function supportsTextSizing({ env, protocol }) {
+  if (protocol !== "kitty") return false;
+  if (env.TERM_PROGRAM === "ghostty" || env.TERM === "xterm-ghostty") return false;
+  return Boolean(env.KITTY_WINDOW_ID || env.TERM === "xterm-kitty");
+}
+
 const kittyChunkSize = 4096;
 
 /**

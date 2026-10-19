@@ -14,7 +14,7 @@ function runCard(args = [], env = {}) {
 }
 
 test("plain card has no escape codes and current info", () => {
-  const output = render();
+  const output = render().text;
   assert.doesNotMatch(output, /\x1b/);
   for (const expected of [
     "Joselito",
@@ -30,7 +30,7 @@ test("plain card has no escape codes and current info", () => {
 test("every row of the box has the same visible width", () => {
   for (const colorMode of ["none", "ansi256", "truecolor"]) {
     for (const lang of ["en", "pt"]) {
-      const rows = render({ lang, colorMode, hyperlinks: true }).split("\n");
+      const rows = render({ lang, colorMode, hyperlinks: true }).text.split("\n");
       const widths = new Set(rows.map(visibleWidth));
       assert.equal(widths.size, 1, `${colorMode}/${lang}: ${[...widths]}`);
     }
@@ -38,7 +38,7 @@ test("every row of the box has the same visible width", () => {
 });
 
 test("unknown language falls back to English", () => {
-  assert.equal(render({ lang: "xx" }), render({ lang: "en" }));
+  assert.deepEqual(render({ lang: "xx" }), render({ lang: "en" }));
 });
 
 test("cli prints the card without colors when piped", () => {
@@ -54,7 +54,7 @@ test("cli honors FORCE_COLOR and NO_COLOR", () => {
 });
 
 test("cli supports --lang pt and rejects unknown options", () => {
-  assert.match(runCard(["--lang", "pt"]).stdout, /Site/);
+  assert.match(runCard(["--lang", "pt"]).stdout, /CONTATO/);
   const result = runCard(["--nope"]);
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Usage/);

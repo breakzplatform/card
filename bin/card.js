@@ -41,4 +41,4 @@ if (options.help) {
 const colorMode = detectColorMode(process.stdout, process.env, options["no-color"]);
 const hyperlinks = colorMode !== "none" && process.stdout.isTTY === true;
 
-console.log(`\n${render({ lang: options.lang, colorMode, hyperlinks })}\n`);
+console.log(`\n${render({ lang: options.lang, colorMode, hyperlinks }).text}\n`);

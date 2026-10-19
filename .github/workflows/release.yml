@@ -25,9 +25,9 @@ jobs:
             echo "Tag $GITHUB_REF_NAME does not match package.json $version" >&2
             exit 1
           fi
-      - run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      # Trusted publishing (OIDC) needs npm 11.5.1 or newer; no token is stored.
+      - run: npm install --global npm@latest
+      - run: npm publish --access public
 
   github-release:
     needs: publish

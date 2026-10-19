@@ -45,6 +45,11 @@ export const card = {
         "small tools, and running my own services at home. I also empower " +
         "the tech communities around me.",
       hint: "npx joselito --pix copies the Pix key",
+      pixMessages: {
+        copied: "Pix key copied to the clipboard:",
+        sent: "Pix key sent to the terminal clipboard:",
+        failed: "Could not reach the clipboard. Copy the Pix key by hand:",
+      },
       headings: { accounts: "Accounts", support: "Support", contact: "Contact" },
       labels: {
         linkedin: "LinkedIn",
@@ -68,6 +73,11 @@ export const card = {
         "small tools, and running my own services at home. I also empower " +
         "the tech communities around me.",
       hint: "npx joselito --pix copia a chave Pix",
+      pixMessages: {
+        copied: "Chave Pix copiada para a área de transferência:",
+        sent: "Chave Pix enviada para a área de transferência do terminal:",
+        failed: "Não consegui acessar a área de transferência. Copie a chave Pix:",
+      },
       headings: { accounts: "Contas", support: "Apoie", contact: "Contato" },
       labels: {
         linkedin: "LinkedIn",

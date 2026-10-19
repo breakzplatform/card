@@ -60,7 +60,7 @@ export const card = {
         "In the game since 2008: a webmaster working remotely, building " +
         "products for humans (and tools that make life easier), and running " +
         "my own services at home. I also empower the tech communities " +
-        "around me. Sushi and burrito lover.",
+        "around me.",
       hint: "npx joselito --pix copies the Pix key",
       pixMessages: {
         copied: "Pix key copied to the clipboard:",
@@ -89,7 +89,7 @@ export const card = {
         "In the game since 2008: a webmaster working remotely, building " +
         "products for humans (and tools that make life easier), and running " +
         "my own services at home. I also empower the tech communities " +
-        "around me. Sushi and burrito lover.",
+        "around me.",
       hint: "npx joselito --pix copia a chave Pix",
       pixMessages: {
         copied: "Chave Pix copiada para a área de transferência:",

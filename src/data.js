@@ -3,23 +3,30 @@ export const card = {
   name: "Joselito",
   links: [
     { key: "web", url: "https://joseli.to" },
-    { key: "twitter", url: "https://twitter.com/breakzplatform" },
+    { key: "email", url: "mailto:eu@joseli.to", display: "eu@joseli.to" },
+    { key: "bluesky", url: "https://bsky.app/profile/joseli.to" },
     { key: "github", url: "https://github.com/breakzplatform" },
-    { key: "unsplash", url: "https://unsplash.com/@breakzplatform" },
-    { key: "kofi", url: "https://ko-fi.com/joselito" },
   ],
   locales: {
     en: {
-      pronouns: "(he/him/his)",
-      role: "Community Program Manager · Turing",
-      labels: { web: "Web", twitter: "Twitter", github: "GitHub", unsplash: "Unsplash", kofi: "Ko-fi" },
-      highlights: [],
+      pronouns: "(he/him)",
+      role: "Developer Relations · Twilio",
+      labels: { web: "Web", email: "Email", bluesky: "Bluesky", github: "GitHub" },
+      highlights: [
+        "Notion Ambassador",
+        "Former GDG Recife chapter lead",
+        "and Community Manager (2014–2020)",
+      ],
     },
     pt: {
       pronouns: "(ele/dele)",
-      role: "Community Program Manager · Turing",
-      labels: { web: "Site", twitter: "Twitter", github: "GitHub", unsplash: "Unsplash", kofi: "Ko-fi" },
-      highlights: [],
+      role: "Developer Relations · Twilio",
+      labels: { web: "Site", email: "E-mail", bluesky: "Bluesky", github: "GitHub" },
+      highlights: [
+        "Notion Ambassador",
+        "Ex-líder do GDG Recife",
+        "e Community Manager (2014–2020)",
+      ],
     },
   },
 };

@@ -59,3 +59,12 @@ test("cli supports --lang pt and rejects unknown options", () => {
   assert.equal(result.status, 1);
   assert.match(result.stderr, /Usage/);
 });
+
+test("cli never sends images to a pipe and validates --image", () => {
+  const piped = runCard(["--image", "kitty"], { TERM: "xterm-kitty", FORCE_COLOR: "1" });
+  assert.equal(piped.status, 0, piped.stderr);
+  assert.doesNotMatch(piped.stdout, /\x1b_G|\x1b\]1337/);
+  const invalid = runCard(["--image", "sixel"]);
+  assert.equal(invalid.status, 1);
+  assert.match(invalid.stderr, /Invalid --image/);
+});

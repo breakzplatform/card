@@ -92,15 +92,15 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
     section.links.map((sourceLink) => {
       const link = localizeLink(sourceLink, lang);
       const label = locale.labels[link.key].toUpperCase();
-      const display = link.display ?? displayUrl(link.url);
+      const parts = link.parts ?? [{ text: link.display ?? displayUrl(link.url), url: link.url }];
+      const value = parts
+        .map(({ text, url }) =>
+          paint(text, { fg: "link", bold: Boolean(link.parts), underline: Boolean(url), url }),
+        )
+        .join("");
       return {
-        width: labelWidth + 2 + visibleWidth(display),
-        text:
-          paint(label, { fg: "textMuted" }) +
-          space(labelWidth - label.length + 2) +
-          (link.url
-            ? paint(display, { fg: "link", underline: true, url: link.url })
-            : paint(display, { fg: "link", bold: true })),
+        width: labelWidth + 2 + visibleWidth(value),
+        text: paint(label, { fg: "textMuted" }) + space(labelWidth - label.length + 2) + value,
       };
     }),
   );

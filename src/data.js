@@ -1,7 +1,9 @@
 // Content mirrors https://joselito.bio, in the order the page shows it.
 // Support options follow the design system order: Pix, Buy Me a Coffee,
 // GitHub Sponsors (as listed on https://pix.joseli.to).
-export const pixKey = "apoie@pix.joseli.to";
+// Only the domain part links (to the Pix page); the key itself stays plain.
+const pixKeyParts = [{ text: "apoie@" }, { text: "pix.joseli.to", url: "https://pix.joseli.to" }];
+export const pixKey = pixKeyParts.map((part) => part.text).join("");
 
 // A link can override its fields per language under `locales`.
 export function localizeLink(link, lang) {
@@ -30,7 +32,7 @@ export const card = {
     {
       key: "support",
       links: [
-        { key: "pix", display: pixKey },
+        { key: "pix", parts: pixKeyParts },
         { key: "coffee", url: "https://buymeacoffee.com/joselito" },
         { key: "sponsors", url: "https://github.com/sponsors/breakzplatform" },
       ],

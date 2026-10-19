@@ -79,9 +79,11 @@ test("support lists Pix, Buy Me a Coffee and GitHub Sponsors in order", () => {
   assert.match(output, /--pix/);
 });
 
-test("the Pix key is plain text, not a hyperlink", () => {
+test("only pix.joseli.to links in the Pix key", () => {
   const output = render({ colorMode: "truecolor", hyperlinks: true }).text;
-  assert.doesNotMatch(output, /\x1b\]8;;[^\x07]*apoie@pix/);
+  assert.doesNotMatch(output, /\x1b\]8;;[^\x07]*\x07apoie@/);
+  assert.ok(output.includes("\x1b]8;;https://pix.joseli.to\x07pix.joseli.to\x1b]8;;\x07"));
+  assert.match(render().text, /apoie@pix\.joseli\.to/);
   assert.match(output, /\x1b\]8;;https:\/\/github\.com\/sponsors\/breakzplatform\x07/);
 });
 

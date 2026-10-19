@@ -1,7 +1,7 @@
 # npx joseli.to
 
 [![npm](https://img.shields.io/npm/v/joselito?labelColor=000000&color=FFB000)](https://www.npmjs.com/package/joselito)
-[![license](https://img.shields.io/npm/l/joselito?labelColor=000000&color=FFB000)](package.json)
+[![license](https://img.shields.io/npm/l/joselito?labelColor=000000&color=FFB000)](LICENSE)
 [![node](https://img.shields.io/badge/node-%E2%89%A520-FFB000?labelColor=000000)](package.json)
 
 My business card, right in your terminal.
@@ -10,49 +10,12 @@ My business card, right in your terminal.
 npx joselito
 ```
 
-<details>
-<summary>See the card</summary>
-<br>
 <a href="https://joselito.bio">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/card-dark.svg">
     <img src="assets/card.svg" width="100%" alt="The joselito terminal card: avatar, name, bio, accounts, support and contact links in amber on black">
   </picture>
 </a>
-</details>
-
-## Accounts
-
-[LinkedIn](https://www.linkedin.com/in/breakzplatform) · [Bluesky](https://bsky.app/profile/im.joseli.to) · [GitHub](https://github.com/breakzplatform) · [ORCID](https://orcid.org/0009-0009-2564-0761)
-
-## Support
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="assets/qr-dark.svg">
-  <img src="assets/qr.svg" width="220" alt="Pix QR code for apoie@pix.joseli.to">
-</picture>
-
-**Pix key (email)**, or run `npx joselito --pix` to copy it
-
-<code>apoie@<a href="https://pix.joseli.to">pix.joseli.to</a></code>
-
-<a href="https://buymeacoffee.com/joselito">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/coffee-dark.svg">
-    <img src="assets/coffee.svg" width="380" alt="Buy Me a Coffee">
-  </picture>
-</a>
-<br>
-<a href="https://github.com/sponsors/breakzplatform">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/sponsors-dark.svg">
-    <img src="assets/sponsors.svg" width="380" alt="GitHub Sponsors">
-  </picture>
-</a>
-
-## Contact
-
-[me@joseli.to](mailto:me@joseli.to) · Book a call: [cal.joseli.to/me](https://cal.joseli.to/me) · [joselito.bio](https://joselito.bio)
 
 ## Options
 
@@ -60,43 +23,43 @@ npx joselito
 | --- | --- |
 | `--lang pt` | Print the card in Portuguese |
 | `--pix` | Copy the Pix key to the clipboard |
-| `--no-color` | Print plain text, no colors and no image |
-| `--image <mode>` | Avatar image: `auto` (default), `kitty`, `iterm` or `off` |
+| `--no-color` | Plain text: no colors, no images |
+| `--image <mode>` | Images: `auto` (default), `kitty`, `iterm` or `off` |
 | `-h`, `--help` | Show usage |
 
-Colors are on in a TTY and off when piped. `NO_COLOR` and `FORCE_COLOR` are honored. In terminals that support them, links are clickable.
+Colors follow the terminal theme of the joseli.to design system, in truecolor when `COLORTERM` is `truecolor` or `24bit` and in 256 colors otherwise. They are off when piped; `NO_COLOR` and `FORCE_COLOR` are honored. Links are clickable where the terminal supports it.
 
-The card follows the terminal theme of the joseli.to design system: amber on black, in truecolor when `COLORTERM` is `truecolor` or `24bit` and in the nearest 256 colors otherwise.
+## Inline images
 
-### Inline avatar
+The avatar and a larger wordmark show up in:
 
-Terminals with inline images show the avatar inside the card and a larger wordmark:
+- kitty: kitty graphics, plus double-size text (OSC 66, kitty 0.40+) for the wordmark
+- Ghostty: kitty graphics
+- iTerm2, WezTerm: iTerm2 inline images
 
-- kitty: kitty graphics for the avatar, double-size text (OSC 66, kitty 0.40+) for the wordmark
-- Ghostty: kitty graphics for both
-- iTerm2, WezTerm: iTerm2 inline images for both
+Pipes, `NO_COLOR`/`--no-color`, tmux/screen and windows too short for the card get the text card. The images are embedded, so the card works offline.
 
-Everywhere else, and always when piped, with `NO_COLOR`/`--no-color`, inside tmux or screen, or when the window is too short for the card, the card is text only. The images are small PNGs embedded in [`src/avatar.js`](src/avatar.js) and [`src/wordmark.js`](src/wordmark.js), so the card works offline.
+## Copying the Pix key
 
-### Copying the Pix key
-
-`--pix` sends the key through OSC 52 on terminals known to accept it (kitty, Ghostty, WezTerm, Windows Terminal, Alacritty, foot) and over SSH. Locally it also tries `pbcopy`, `clip.exe`, `wl-copy`, `xclip` and `xsel`. The key is always printed, so it can be copied by hand when nothing works.
+`--pix` sends the key through OSC 52 on terminals known to accept it and over SSH, and tries `pbcopy`, `clip.exe`, `wl-copy`, `xclip` and `xsel` locally. The key is always printed.
 
 ## Development
 
-Requires Node.js 20 or newer. There are no runtime dependencies.
+Requires Node.js 20 or newer. No runtime dependencies.
 
 ```sh
-node bin/card.js    # print the card
-npm test            # run the tests
-npm pack && npx ./joselito-*.tgz   # try the published package locally
+node bin/card.js                    # print the card
+npm test                            # run the tests
+npm pack && npx ./joselito-*.tgz    # try the package locally
 ```
 
-The card content lives in [`src/data.js`](src/data.js) and mirrors [joselito.bio](https://joselito.bio). The layout is in [`src/render.js`](src/render.js), terminal detection in [`src/terminal.js`](src/terminal.js) and the clipboard in [`src/clipboard.js`](src/clipboard.js).
+Content lives in [`src/data.js`](src/data.js) and mirrors [joselito.bio](https://joselito.bio). Generated files, to rebuild after changing the card:
 
-Generated files:
+- `src/avatar.js`: `scripts/build-avatar.sh`
+- `src/wordmark.js` and `assets/card*.svg`: `uv run --with fonttools --with brotli scripts/build-images.py`
 
-- `src/avatar.js`: `scripts/build-avatar.sh` (needs ImageMagick)
-- `src/wordmark.js`, `assets/card.svg`, `assets/card-dark.svg`: `uv run --with fonttools --with brotli scripts/build-images.py` (needs ImageMagick), after any change to the card
+Both need ImageMagick. Pushing a `v*` tag that matches `package.json` publishes to npm.
 
-The Pix QR code and the support buttons come from [pix.joseli.to](https://github.com/breakzplatform/pix.joseli.to).
+## License
+
+[MIT](LICENSE)

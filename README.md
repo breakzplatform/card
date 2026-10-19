@@ -13,8 +13,9 @@ My business card, right in your terminal.
 npx joselito
 ```
 
-[![CI](https://github.com/breakzplatform/card/actions/workflows/ci.yml/badge.svg)](https://github.com/breakzplatform/card/actions/workflows/ci.yml)
-[![npm](https://img.shields.io/npm/v/joselito)](https://www.npmjs.com/package/joselito)
+[![npm](https://img.shields.io/npm/v/joselito?labelColor=000000&color=FFB000)](https://www.npmjs.com/package/joselito)
+[![license](https://img.shields.io/npm/l/joselito?labelColor=000000&color=FFB000)](package.json)
+[![node](https://img.shields.io/badge/node-%E2%89%A520-FFB000?labelColor=000000)](package.json)
 
 ## Accounts
 

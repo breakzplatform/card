@@ -1,11 +1,8 @@
-<a href="https://joselito.bio">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/card-dark.svg">
-    <img src="assets/card.svg" width="100%" alt="The joselito terminal card: avatar, name, bio, accounts, support and contact links in amber on black">
-  </picture>
-</a>
+# npx joseli.to
 
-&nbsp;
+[![npm](https://img.shields.io/npm/v/joselito?labelColor=000000&color=FFB000)](https://www.npmjs.com/package/joselito)
+[![license](https://img.shields.io/npm/l/joselito?labelColor=000000&color=FFB000)](package.json)
+[![node](https://img.shields.io/badge/node-%E2%89%A520-FFB000?labelColor=000000)](package.json)
 
 My business card, right in your terminal.
 
@@ -13,9 +10,16 @@ My business card, right in your terminal.
 npx joselito
 ```
 
-[![npm](https://img.shields.io/npm/v/joselito?labelColor=000000&color=FFB000)](https://www.npmjs.com/package/joselito)
-[![license](https://img.shields.io/npm/l/joselito?labelColor=000000&color=FFB000)](package.json)
-[![node](https://img.shields.io/badge/node-%E2%89%A520-FFB000?labelColor=000000)](package.json)
+<details>
+<summary>See the card</summary>
+<br>
+<a href="https://joselito.bio">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/card-dark.svg">
+    <img src="assets/card.svg" width="100%" alt="The joselito terminal card: avatar, name, bio, accounts, support and contact links in amber on black">
+  </picture>
+</a>
+</details>
 
 ## Accounts
 

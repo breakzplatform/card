@@ -45,7 +45,7 @@ CELL_ASPECT = 2.1
 WORDMARK_PIXELS_PER_COLUMN = 20
 
 FONT_SIZE = 15
-LINE_HEIGHT = 21
+LINE_HEIGHT = 19
 INSET = 10
 SHADOW_OFFSET = 6
 SHADOWS = {"card.svg": "#111111", "card-dark.svg": "#A9761A"}
@@ -119,7 +119,10 @@ def build_wordmark(serif, base, block):
     height = round(width * WORDMARK_ROWS * CELL_ASPECT / columns)
     # A little room around the tilted block, which overhangs its box.
     size = 0.92 * min(height / em_height, width / em_width)
-    elements, _ = wordmark_elements(serif, base, block, 0, (height - em_height * size) / 2, size)
+    # Top-aligned, so the ink block starts on the photo's first row; the
+    # few pixels are the overhang of the tilted block.
+    top = (BLOCK_TOP - WORDMARK_TOP) * size + 3
+    elements, _ = wordmark_elements(serif, base, block, 0, top, size)
     svg = (
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}">'
         f'<rect width="{width}" height="{height}" fill="{PAGE}"/>' + "".join(elements) + "</svg>"
@@ -232,12 +235,14 @@ def build_readme_svgs(fonts, serif):
         y = origin_y + (placement["line"] - 1) * LINE_HEIGHT
         return x, y, placement["cols"] * cell_width, placement["rows"] * LINE_HEIGHT
 
+    # The photo fills its whole cell box, cropping the sides, so its top and
+    # bottom line up with the wordmark and the last line of the text block.
     avatar_x, avatar_y, avatar_width, avatar_height = cell_box(card["avatar"])
-    size = min(avatar_width, avatar_height)
     body.insert(
         0,
-        f'<image x="{avatar_x:.2f}" y="{avatar_y + (avatar_height - size) / 2:.2f}" width="{size:.2f}" height="{size:.2f}" '
-        f'style="image-rendering:pixelated" href="data:image/png;base64,{avatar_png}"/>',
+        f'<image x="{avatar_x:.2f}" y="{avatar_y:.2f}" width="{avatar_width:.2f}" height="{avatar_height:.2f}" '
+        'preserveAspectRatio="xMidYMid slice" style="image-rendering:pixelated" '
+        f'href="data:image/png;base64,{avatar_png}"/>',
     )
 
     # The wordmark is set larger than the cells it reserves would allow in a
@@ -245,7 +250,9 @@ def build_readme_svgs(fonts, serif):
     mark_x, mark_y, _, mark_height = cell_box(card["wordmark"])
     em_height = WORDMARK_TOP + WORDMARK_BOTTOM
     mark_size = mark_height / em_height
-    elements, _ = wordmark_elements(serif, card["words"]["base"], card["words"]["block"], mark_x, mark_y, mark_size)
+    # Lift the wordmark so the top of its ink block meets the top of the photo.
+    mark_top = mark_y - (WORDMARK_TOP - BLOCK_TOP) * mark_size
+    elements, _ = wordmark_elements(serif, card["words"]["base"], card["words"]["block"], mark_x, mark_top, mark_size)
     body.extend(elements)
 
     defs = "".join(f'<path id="{key}" d="{commands}"/>' for key, commands in glyphs.items())

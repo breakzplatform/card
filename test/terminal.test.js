@@ -97,7 +97,7 @@ test("avatar layout reserves a blank cell box inside the card", () => {
     const cells = [...lines[avatar.line + row]].slice(avatar.column - 1, avatar.column - 1 + avatar.cols);
     assert.equal(cells.join(""), " ".repeat(avatar.cols), `row ${row}`);
   }
-  assert.match([...lines[avatar.line]].slice(avatar.column - 1).join(""), /^ {16}joseli\.to/);
+  assert.match([...lines[avatar.line]].slice(avatar.column - 1).join(""), new RegExp(`^ {${avatarCells.cols + 2}}joseli\\.to`));
   assert.equal(new Set(lines.map(visibleWidth)).size, 1);
   assert.equal(render().avatar, null);
 });

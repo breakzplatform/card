@@ -13,7 +13,9 @@ export const palette = {
   shadow: ["#A9761A", 136],
 };
 
-export const avatarCells = { cols: 14, rows: 7 };
+// Six rows, the height of the text block beside it (wordmark, blank,
+// name, title, details), so both start and end on the same rows.
+export const avatarCells = { cols: 12, rows: 6 };
 
 const minContentWidth = 56;
 const padding = 2;

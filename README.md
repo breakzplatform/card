@@ -1,4 +1,4 @@
-# npx joseli.to
+# npx joselito
 
 [![npm](https://img.shields.io/npm/v/joselito?labelColor=000000&color=FFB000)](https://www.npmjs.com/package/joselito)
 [![license](https://img.shields.io/npm/l/joselito?labelColor=000000&color=FFB000)](LICENSE)

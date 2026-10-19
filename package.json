@@ -1,33 +1,37 @@
 {
   "name": "joselito",
-  "version": "1.4.1",
-  "description": "A personal card for Joselito (@breakzplatform)",
-  "main": "./bin/card.js",
+  "version": "2.0.0",
+  "description": "Joselito's business card for the terminal. Run npx joselito",
   "type": "module",
   "bin": {
-    "joselito": "./bin/card.js"
+    "joselito": "bin/card.js"
   },
+  "exports": "./src/render.js",
+  "files": [
+    "bin",
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "npx",
+    "business-card",
+    "card",
+    "cli",
+    "terminal"
+  ],
+  "author": "Joselito <eu@joseli.to> (https://joseli.to)",
+  "license": "MIT",
+  "homepage": "https://joseli.to",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/breakzplatform/card.git"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "license": "MIT",
-  "dependencies": {
-    "boxen": "^6.2.1",
-    "chalk": "^2.4.1",
-    "commander": "^2.19.0",
-    "yargs": "^15.3.1"
-  },
-  "devDependencies": {
-    "standard": "^16.0.4"
-  },
   "bugs": {
     "url": "https://github.com/breakzplatform/card/issues"
-  },
-  "homepage": "https://joseli.to",
-  "author": "Joselito <eu@joseli.to> (http://joseli.to)"
+  }
 }

@@ -1,87 +1,96 @@
 #!/usr/bin/env node
 
-import chalk from "chalk";
-import boxen from "boxen";
-import yargs from "yargs";
+import { parseArgs } from "node:util";
+import { avatarPng } from "../src/avatar.js";
+import { copyToClipboard } from "../src/clipboard.js";
+import { card as content, pixKey } from "../src/data.js";
+import { render } from "../src/render.js";
+import {
+  detectColorMode,
+  detectImageProtocol,
+  encodeImage,
+  placeImage,
+  supportsTextSizing,
+} from "../src/terminal.js";
+import { wordmarkPng } from "../src/wordmark.js";
 
-const { argv } = yargs;
+const usage = `Usage: npx joselito [--lang en|pt] [--no-color] [--image auto|kitty|iterm|off] [--pix]
 
-const lang = argv.lang || "en";
+Options:
+  --lang <code>   Card language: en (default) or pt
+  --no-color      Print plain text (NO_COLOR is honored too)
+  --image <mode>  Avatar image: auto (default), kitty, iterm or off
+  --pix           Copy the Pix key to the clipboard instead of printing the card
+  -h, --help      Show this help`;
 
-const options = {
-  padding: 1,
-  margin: 1,
-  title: "joseli.to",
-  titleAlignment: "center",
-  borderStyle: "bold",
-  borderColor: "#652585",
+const imageModes = ["auto", "kitty", "iterm", "off"];
+
+let options;
+try {
+  ({ values: options } = parseArgs({
+    options: {
+      lang: { type: "string", default: "en" },
+      "no-color": { type: "boolean", default: false },
+      image: { type: "string", default: "auto" },
+      pix: { type: "boolean", default: false },
+      help: { type: "boolean", short: "h", default: false },
+    },
+  }));
+  if (!imageModes.includes(options.image)) {
+    throw new Error(`Invalid --image '${options.image}', expected one of: ${imageModes.join(", ")}`);
+  }
+} catch (error) {
+  console.error(`${error.message}\n\n${usage}`);
+  process.exit(1);
+}
+
+if (options.help) {
+  console.log(usage);
+  process.exit(0);
+}
+
+const { stdout, env } = process;
+const isTTY = stdout.isTTY === true;
+
+if (options.pix) {
+  const messages = (content.locales[options.lang] ?? content.locales.en).pixMessages;
+  const result = copyToClipboard(pixKey, {
+    isTTY,
+    env,
+    platform: process.platform,
+    write: (sequence) => stdout.write(sequence),
+  });
+  const message = result.command ? messages.copied : result.osc52 ? messages.sent : messages.failed;
+  stdout.write(`${message}\n\n  ${pixKey}\n\n`);
+  process.exit(0);
+}
+const colorMode = detectColorMode({ isTTY, env, noColor: options["no-color"] });
+let protocol = detectImageProtocol({ isTTY, env, colorMode, preference: options.image });
+
+const renderOptions = { lang: options.lang, colorMode, hyperlinks: colorMode !== "none" && isTTY };
+const imageOptions = {
+  avatar: true,
+  wordmark: supportsTextSizing({ env, protocol }) ? "sized" : "image",
 };
+let card = render(protocol === "none" ? renderOptions : { ...renderOptions, ...imageOptions });
 
-const data = {
-  logo: chalk.white(`     __ _____ 
-  __|  |     |
- |  |  |  |  |
- |_____|_____|
-  _____ _____ 
- |   __|   __|
- |__   |   __|
- |_____|_____|`),
-  name: chalk.white(" Joselito ·"),
-  mail: {
-    en: chalk.hex(options.borderColor)("me@joseli.to"),
-    pt: chalk.hex(options.borderColor)("eu@joseli.to"),
-  },
-  pronoun: {
-    en: chalk.white("(he/him/his)"),
-    pt: chalk.white("(ele/dele)"),
-  },
-  work: chalk.white("Community Program Manager · Turing"),
-  twitter: chalk.hex(options.borderColor)("https://twitter.com/breakzplatform"),
-  github: chalk.hex(options.borderColor)("https://github.com/breakzplatform"),
-  unsplash: chalk.hex(options.borderColor)("https://unsplash.com/@breakzplatform"),
-  picpay: {
-    pt: chalk.hex(options.borderColor)("https://picpay.me/joselitojunior"),
-    en: chalk.hex(options.borderColor)("https://ko-fi.com/joselito")
-  },
-  web: {
-    pt: chalk.hex(options.borderColor)("https://joseli.to/pt"),
-    en: chalk.hex(options.borderColor)("https://joseli.to")
-  },
-};
+// Placing images moves the cursor back up into the card, which only works
+// while the whole card is still on screen.
+const cardHeight = card.text.split("\n").length;
+if (card.avatar && isTTY && stdout.rows && stdout.rows < cardHeight + 3) {
+  protocol = "none";
+  card = render(renderOptions);
+}
 
-const defaultLabel = {
-  work: chalk.white.bold("     Work:"),
-  twitter: chalk.white.bold("  Twitter:"),
-  github: chalk.white.bold("   GitHub:"),
-  picpay: chalk.white.bold("    Ko-fi:"),
-  unsplash: chalk.white.bold(" Unsplash:"),
-  web: chalk.white.bold("      Web:"),
-};
-
-const label = {
-  en: { ...defaultLabel },
-  pt: {
-    ...defaultLabel,
-    work: chalk.white.bold(" Trabalho:"),
-    card: chalk.white.bold("   Cartão:"),
-    picpay: chalk.white.bold("   PicPay:"),
-    web: chalk.white.bold("     Site:"),
-  },
-};
-
-const output = `${data.logo}
-
-
-${data.name} ${data.mail[lang]} ${data.pronoun[lang]}
-
-${label[lang].work}  ${data.work}
-            ${chalk.hex(options.borderColor)("joselito@turing.com")}
-
-${label[lang].web}  ${data.web[lang]}
-${label[lang].twitter}  ${data.twitter}
-${label[lang].github}  ${data.github}
-${label[lang].unsplash}  ${data.unsplash}
-${label[lang].picpay}  ${data.picpay[lang]}`;
-
-console.clear();
-console.log(chalk(boxen(output, options)));
+let output = `\n${card.text}\n\n`;
+for (const [placement, png] of [
+  [card.avatar, avatarPng],
+  [card.wordmark, wordmarkPng],
+]) {
+  if (!placement) continue;
+  output += placeImage(encodeImage(protocol, png, placement), {
+    linesBelow: cardHeight + 1 - placement.line,
+    column: placement.column,
+  });
+}
+stdout.write(output);

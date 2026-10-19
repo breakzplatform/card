@@ -33,9 +33,9 @@ export const card = {
       pronouns: "he/him",
       location: "Recife, Brazil",
       about:
-        "In the game since 2008: working remotely, building small tools, " +
-        "and running my own services at home. I also empower the tech " +
-        "communities around.",
+        "In the game since 2008: a webmaster working remotely, building " +
+        "small tools, and running my own services at home. I also empower " +
+        "the tech communities around me.",
       headings: { accounts: "Accounts", support: "Support", contact: "Contact" },
       labels: {
         linkedin: "LinkedIn",
@@ -53,9 +53,9 @@ export const card = {
       pronouns: "ele/dele",
       location: "Recife, Brasil",
       about:
-        "In the game since 2008: working remotely, building small tools, " +
-        "and running my own services at home. I also empower the tech " +
-        "communities around.",
+        "In the game since 2008: a webmaster working remotely, building " +
+        "small tools, and running my own services at home. I also empower " +
+        "the tech communities around me.",
       headings: { accounts: "Contas", support: "Apoie", contact: "Contato" },
       labels: {
         linkedin: "LinkedIn",

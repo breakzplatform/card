@@ -93,7 +93,9 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
         text:
           paint(label, { fg: "textMuted" }) +
           space(labelWidth - label.length + 2) +
-          paint(display, { fg: "link", underline: true, url: link.url }),
+          (link.url
+            ? paint(display, { fg: "link", underline: true, url: link.url })
+            : paint(display, { fg: "link", bold: true })),
       };
     }),
   );
@@ -121,7 +123,7 @@ export function render({ lang = "en", colorMode = "none", hyperlinks = false, av
     lines.push("", block(` ${locale.headings[section.key].toUpperCase()} `));
     lines.push(...linkRows[index].map((row) => row.text));
   });
-  lines.push("", paint("■", { blink: true }));
+  lines.push("", paint(`# ${locale.hint}`, { fg: "textMuted" }), paint("■", { blink: true }));
 
   const text = frame(lines, { contentWidth, paint, space });
   const avatarPlacement = avatar

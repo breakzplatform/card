@@ -1,4 +1,8 @@
 // Content mirrors https://joselito.bio, in the order the page shows it.
+// Support options follow the design system order: Pix, Buy Me a Coffee,
+// GitHub Sponsors (as listed on https://pix.joseli.to).
+export const pixKey = "apoie@pix.joseli.to";
+
 export const card = {
   command: "npx joselito",
   wordmark: { base: "joseli", block: ".to" },
@@ -16,7 +20,11 @@ export const card = {
     },
     {
       key: "support",
-      links: [{ key: "coffee", url: "https://buymeacoffee.com/joselito" }],
+      links: [
+        { key: "pix", display: pixKey },
+        { key: "coffee", url: "https://buymeacoffee.com/joselito" },
+        { key: "sponsors", url: "https://github.com/sponsors/breakzplatform" },
+      ],
     },
     {
       key: "contact",
@@ -36,13 +44,16 @@ export const card = {
         "In the game since 2008: a webmaster working remotely, building " +
         "small tools, and running my own services at home. I also empower " +
         "the tech communities around me.",
+      hint: "npx joselito --pix copies the Pix key",
       headings: { accounts: "Accounts", support: "Support", contact: "Contact" },
       labels: {
         linkedin: "LinkedIn",
         bluesky: "Bluesky",
         github: "GitHub",
         orcid: "ORCID",
+        pix: "Pix",
         coffee: "Buy Me a Coffee",
+        sponsors: "GitHub Sponsors",
         email: "Email",
         calendar: "Calendar",
         web: "Web",
@@ -56,13 +67,16 @@ export const card = {
         "In the game since 2008: a webmaster working remotely, building " +
         "small tools, and running my own services at home. I also empower " +
         "the tech communities around me.",
+      hint: "npx joselito --pix copia a chave Pix",
       headings: { accounts: "Contas", support: "Apoie", contact: "Contato" },
       labels: {
         linkedin: "LinkedIn",
         bluesky: "Bluesky",
         github: "GitHub",
         orcid: "ORCID",
+        pix: "Pix",
         coffee: "Buy Me a Coffee",
+        sponsors: "GitHub Sponsors",
         email: "E-mail",
         calendar: "Agenda",
         web: "Site",

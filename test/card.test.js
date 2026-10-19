@@ -68,3 +68,19 @@ test("cli never sends images to a pipe and validates --image", () => {
   assert.equal(invalid.status, 1);
   assert.match(invalid.stderr, /Invalid --image/);
 });
+
+test("support lists Pix, Buy Me a Coffee and GitHub Sponsors in order", () => {
+  const output = render().text;
+  const positions = ["apoie@pix.joseli.to", "buymeacoffee.com/joselito", "github.com/sponsors/breakzplatform"].map(
+    (needle) => output.indexOf(needle),
+  );
+  assert.ok(positions.every((position) => position > 0), String(positions));
+  assert.deepEqual([...positions].sort((a, b) => a - b), positions);
+  assert.match(output, /--pix/);
+});
+
+test("the Pix key is plain text, not a hyperlink", () => {
+  const output = render({ colorMode: "truecolor", hyperlinks: true }).text;
+  assert.doesNotMatch(output, /\x1b\]8;;[^\x07]*apoie@pix/);
+  assert.match(output, /\x1b\]8;;https:\/\/github\.com\/sponsors\/breakzplatform\x07/);
+});
